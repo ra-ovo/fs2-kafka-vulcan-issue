@@ -14,6 +14,7 @@ import fs2.kafka.vulcan.{
   avroDeserializer
 }
 import example.Model.Person
+import scala.util.Try
 
 class HelloSpec extends AnyFlatSpec with Matchers {
   import cats.effect._
@@ -40,11 +41,46 @@ class HelloSpec extends AnyFlatSpec with Matchers {
       }}
       .interruptAfter(1.seconds)
 
+    val printJars = fs2.Stream
+      .eval(
+        IO {
+          val klass1 = Class.forName("io.confluent.kafka.serializers.subject.TopicNameStrategy")
+          val klass2 = Class.forName("io.confluent.kafka.serializers.subject.strategy.SubjectNameStrategy")
+          val location1 = klass1.getResource('/' + klass1.getName().replace('.', '/') + ".class")
+          val location2 = klass2.getResource('/' + klass2.getName().replace('.', '/') + ".class")
+          println("_" * 100)
+          println(s"- TNS Jar: $location1")
+          println(s"- SNS Jar: $location2")
+          println("_" * 100)
+          println
+        }
+      )
+
+    val investigateKafkaLoading = fs2.Stream
+      .eval(
+        IO {
+          val cfgs = new java.util.HashMap[String, AnyRef]
+          cfgs.put("schema.registry.url", "http://127.0.0.1:8081")
+          cfgs.put("key.subject.name.strategy",   "io.confluent.kafka.serializers.subject.TopicNameStrategy") // default opt
+          cfgs.put("value.subject.name.strategy", "io.confluent.kafka.serializers.subject.TopicNameStrategy") // default opt
+
+          val clazz = classOf[io.confluent.kafka.serializers.subject.strategy.SubjectNameStrategy[_]]
+          Try(
+            new io.confluent.kafka.serializers.KafkaAvroDeserializerConfig(cfgs)
+                .getConfiguredInstance("key.subject.name.strategy", clazz)
+          ).fold(
+            _.printStackTrace,
+            _ => println(">>> Loaded ok")
+          )
+        }
+      )
 
     val key = "1"
     val value = Person("C3p", "0'" + ju.UUID.randomUUID().toString)
-    val logic = producer(key, value) >> consumer(value)
-    
+
+    // Prob seems to go away when I add `investigateKafkaLoading`:
+    val logic = /*investigateKafkaLoading  >>*/ printJars >>  producer(key, value) >> consumer(value)
+
     logic.compile.drain.unsafeRunSync
   }
 

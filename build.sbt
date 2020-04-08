@@ -14,9 +14,12 @@ lazy val root = (project in file("."))
 
 lazy val libs = Seq(
   "co.fs2" %% "fs2-core" % "2.2.1",
+
   "com.github.fd4s" %% "vulcan" % "1.0.1",
   "com.github.fd4s" %% "fs2-kafka" % "1.0.0",
   "com.github.fd4s" %% "fs2-kafka-vulcan" % "1.0.0",
+  // "com.github.fd4s" %% "fs2-kafka-vulcan" % "1.0.0" exclude ("io.confluent", "common-config"),
+  // "com.github.fd4s" %% "fs2-kafka-vulcan" % "1.0.0" exclude ("io.confluent", "kafka-avro-serializer"),
 )
 
 lazy val testLibs = Seq(
