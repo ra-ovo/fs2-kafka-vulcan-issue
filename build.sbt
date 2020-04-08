@@ -16,7 +16,10 @@ lazy val libs = Seq(
   "co.fs2" %% "fs2-core" % "2.2.1",
   "com.github.fd4s" %% "vulcan" % "1.0.1",
   "com.github.fd4s" %% "fs2-kafka" % "1.0.0",
-  "com.github.fd4s" %% "fs2-kafka-vulcan" % "1.0.0" exclude ("io.confluent", "kafka-clients"),
+  "com.github.fd4s" %% "fs2-kafka-vulcan" % "1.0.0"  excludeAll(
+    ExclusionRule("org.apache.kafka", "kafka-clients"),
+    ExclusionRule("io.confluent", "kafka-clients")
+    ),
   "org.apache.kafka" % "kafka-clients" % "2.4.0"
 )
 
