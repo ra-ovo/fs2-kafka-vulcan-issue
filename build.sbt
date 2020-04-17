@@ -3,13 +3,14 @@ ThisBuild / version          := "0.1.0-SNAPSHOT"
 ThisBuild / organization     := "com.example"
 ThisBuild / organizationName := "example"
 
+ThisBuild / fork := true
+
 lazy val root = (project in file("."))
   .settings(
     name := "fs2-kafka vulcan issue",
     resolvers += "confluent-release" at "https://packages.confluent.io/maven/",
     resolvers += Resolver.bintrayRepo("ovotech", "maven"),
     scalacOptions += "-Ypartial-unification",
-    fork in run := true, 
     libraryDependencies ++= libs ++ testLibs
   )
 
