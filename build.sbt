@@ -3,7 +3,9 @@ ThisBuild / version          := "0.1.0-SNAPSHOT"
 ThisBuild / organization     := "com.example"
 ThisBuild / organizationName := "example"
 
-ThisBuild / fork := true
+// Both of these settings, individually, seem to make the error go away...
+//ThisBuild / fork := true
+Test / fork := true
 
 lazy val root = (project in file("."))
   .settings(
