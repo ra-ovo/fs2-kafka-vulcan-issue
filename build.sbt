@@ -9,6 +9,7 @@ lazy val root = (project in file("."))
     resolvers += "confluent-release" at "https://packages.confluent.io/maven/",
     resolvers += Resolver.bintrayRepo("ovotech", "maven"),
     scalacOptions += "-Ypartial-unification",
+    fork in run := true, 
     libraryDependencies ++= libs ++ testLibs
   )
 
